@@ -10,36 +10,36 @@ import com.flightBooking.model.Cities;
 
 public class AddFlightInventoryRequest {
 	
-	@NotBlank
+	@NotBlank(message="Airline code is a required field")
 	private String airlineCode;
 	
-	@NotBlank
+	@NotBlank(message="Flight number is a required field")
 	private String flightNumber;
 	
-	@NotNull
+	@NotNull(message="Source City cannot be empty")
 	private Cities sourceCity;
 	
-	@NotNull
+	@NotNull(message="Destination city cannot be empty")
 	private Cities destinationCity;
 	
-	@NotNull
+	@NotNull(message="Departure and Arrival date cannot be empty ")
 	private LocalDate departureDate;
 	
-	@NotNull
+	@NotNull(message="Departure and Arrival time cannot be empty ")
 	private LocalTime departureTime;
 	
-	@NotNull
+	@NotNull(message="Departure and Arrival date cannot be empty ")
 	private LocalDate arrivalDate;
 	
-	@NotNull
+	@NotNull(message="Departure and Arrival time cannot be empty ")
 	private LocalTime arrivalTime;
 	
-	@NotNull
-	@Positive
+	@NotNull(message="Total seats cannot be empty")
+	@Positive(message="Total Seats must be positive")
 	private Integer totalSeats;
 	
-	@NotNull
-	@Positive
+	@NotNull(message="Price cannot be empty")
+	@Positive(message="Price must be positive")
 	private Float price;
 	
 	private boolean mealAvailable;

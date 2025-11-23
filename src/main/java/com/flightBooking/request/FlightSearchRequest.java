@@ -9,16 +9,16 @@ import com.flightBooking.model.TripType;
 
 public class FlightSearchRequest {
 
-    @NotNull
+    @NotNull(message="Source City cannot be empty")
     private Cities sourceCity;
 
-    @NotNull
+    @NotNull(message="Destination city cannot be empty")
     private Cities destinationCity;
 
-    @NotNull
+    @NotNull(message="Travel date cannot be empty")
     private LocalDate travelDate;
 
-    @NotNull
+    @NotNull(message="Trip type is a required filed, either ONE_WAY or ROUND_TRIP")
     private TripType tripType; 
 
     private LocalDate returnDate;  // only required for round-trip

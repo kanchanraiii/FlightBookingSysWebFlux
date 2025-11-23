@@ -12,24 +12,24 @@ import com.flightBooking.model.TripType;
 
 public class BookingRequest {
 
-    @NotBlank
+    @NotBlank(message="Outbound flight is a required field")
     private String outboundFlightId; 
 
     private String returnFlightId; 
 
-    @NotBlank
+    @NotBlank(message="Contact name is a required field")
     private String contactName;
 
-    @Email
-    @NotBlank
+    @Email(message="Invalid email format")
+    @NotBlank(message="Email cannot be empty")
     private String contactEmail;
 
-    @NotNull
+    @NotNull(message="Trip Type is a required field either ONE_WAY or ROUND_TRIP")
     private TripType tripType;
 
     @Valid
-    @NotNull
-    @Size
+    @NotNull(message="Passenger list is required")
+    @Size(min=1, message="At least one passenger is required")
     private List<PassengerRequest> passengers;
 
     // getters and setters

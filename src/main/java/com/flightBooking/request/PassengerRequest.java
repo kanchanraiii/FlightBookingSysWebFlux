@@ -9,14 +9,14 @@ import com.flightBooking.model.Meal;
 
 public class PassengerRequest {
 
-    @NotBlank
+    @NotBlank(message="Name is a required field")
     private String name;
 
-    @NotNull
-    @Min(1)
+    @NotNull(message="Age is a required field")
+    @Min(value=1, message="Min Age can be 1")
     private Integer age;
 
-    @NotNull
+    @NotNull(message="Gender cannot be empty")
     private Gender gender; 
 
     private String seatOutbound; 

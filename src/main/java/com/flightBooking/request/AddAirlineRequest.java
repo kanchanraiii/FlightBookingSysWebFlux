@@ -4,10 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 
 public class AddAirlineRequest {
 
-    @NotBlank
+    @NotBlank(message="Airline Code is a required field")
     private String airlineCode; 
 
-    @NotBlank
+    @NotBlank(message="Airline is a required field")
     private String airlineName;
 
     // getters and setters
