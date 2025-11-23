@@ -1,5 +1,8 @@
 package com.flightBooking.repository;
 
-public class PassengerRepository {
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import com.flightBooking.model.Passenger;
+
+public interface PassengerRepository extends ReactiveMongoRepository<Passenger, String> {
 
 }

@@ -1,5 +1,8 @@
 package com.flightBooking.repository;
 
-public class FlightInventoryRepository {
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import com.flightBooking.model.FlightInventory;
+
+public interface FlightInventoryRepository extends ReactiveMongoRepository<FlightInventory,String>{
 
 }
