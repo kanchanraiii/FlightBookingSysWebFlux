@@ -11,8 +11,6 @@ import lombok.Data;
 public class Airline {
 	
 	@Id
-	private String airlineId;
-	
 	@Indexed(unique=true)
 	private String airlineCode;
 	private String airlineName;

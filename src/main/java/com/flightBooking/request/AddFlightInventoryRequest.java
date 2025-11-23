@@ -8,10 +8,10 @@ import jakarta.validation.constraints.Positive;
 
 import com.flightBooking.model.Cities;
 
-public class AddInventoryRequest {
+public class AddFlightInventoryRequest {
 	
 	@NotBlank
-	private String airlineId;
+	private String airlineCode;
 	
 	@NotBlank
 	private String flightNumber;
@@ -45,12 +45,12 @@ public class AddInventoryRequest {
 	private boolean mealAvailable;
 
 	// getter and setters
-	public String getAirlineId() {
-		return airlineId;
+	public String getAirlineCode() {
+		return airlineCode;
 	}
 
-	public void setAirlineId(String airlineId) {
-		this.airlineId = airlineId;
+	public void setAirlineCode(String airlineCode) {
+		this.airlineCode = airlineCode;
 	}
 
 	public String getFlightNumber() {

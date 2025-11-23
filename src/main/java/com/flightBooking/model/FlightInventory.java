@@ -20,7 +20,7 @@ public class FlightInventory {
 	private String flightId;
 	
 	private String flightNumber;
-	private String airlineId; // fk -> airline
+	private String airlineCode; // fk -> airline
 	private Cities sourceCity;
     private Cities destinationCity;
     private LocalDate departureDate;
