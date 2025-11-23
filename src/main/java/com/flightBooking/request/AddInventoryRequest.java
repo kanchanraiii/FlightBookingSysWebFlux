@@ -44,6 +44,7 @@ public class AddInventoryRequest {
 	
 	private boolean mealAvailable;
 
+	// getter and setters
 	public String getAirlineId() {
 		return airlineId;
 	}
