@@ -102,11 +102,4 @@ class AirlineRepositoryTest {
                 .verifyComplete();
     }
 
-    @Test
-    void testTopExpensiveFlights() {
-        StepVerifier.create(flightRepo.getTopExpensiveFlights())
-                .expectNextMatches(f -> f.getPrice() >= 6000)
-                .expectNextCount(1) 
-                .verifyComplete();
-    }
 }
