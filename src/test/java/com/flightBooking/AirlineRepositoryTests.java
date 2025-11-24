@@ -1,8 +1,5 @@
 package com.flightBooking;
 
-import com.flightBooking.aggregations.AirlineFlightCount;
-import com.flightBooking.aggregations.AirlineSeats;
-import com.flightBooking.aggregations.HighestPriceFlights;
 import com.flightBooking.model.Airline;
 import com.flightBooking.model.FlightInventory;
 import com.flightBooking.repository.AirlineRepository;
