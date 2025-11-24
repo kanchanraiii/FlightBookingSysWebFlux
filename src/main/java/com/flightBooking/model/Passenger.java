@@ -19,7 +19,7 @@ public class Passenger {
     private String bookingId; // fk -> booking
     private String name;
     private int age;
-    private String gender;
+    private Gender gender;
     private Meal meal;
     private String seatOutbound; 
     private String seatReturn;   
