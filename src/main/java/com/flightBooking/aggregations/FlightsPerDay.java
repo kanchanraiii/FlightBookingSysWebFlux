@@ -1,25 +1,11 @@
 package com.flightBooking.aggregations;
 
-import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
+@AllArgsConstructor
 public class FlightsPerDay {
-    
-	// to get flights per day
-	
-	private LocalDate departureDate;
+    private String date;
     private long totalFlights;
-
-    public LocalDate getDepartureDate() { 
-    	return departureDate; 
-    }
-    public void setDepartureDate(LocalDate departureDate) { 
-    	this.departureDate = departureDate; 
-    }
-
-    public long getTotalFlights() { 
-    	return totalFlights; 
-    }
-    public void setTotalFlights(long totalFlights) { 
-    	this.totalFlights = totalFlights; 
-    }
 }
