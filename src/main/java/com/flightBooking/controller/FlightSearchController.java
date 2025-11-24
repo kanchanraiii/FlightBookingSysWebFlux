@@ -18,6 +18,7 @@ public class FlightSearchController {
     @Autowired
     private FlightSearchService searchService;
 
+    // to search a flight
     @PostMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     public Flux<FlightInventory> searchFlights(@Valid @RequestBody FlightSearchRequest req) {

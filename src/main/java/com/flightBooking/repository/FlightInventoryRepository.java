@@ -1,6 +1,11 @@
 package com.flightBooking.repository;
 
 import java.time.LocalDate;
+import com.flightBooking.aggregations.FlightsPerDay;
+import com.flightBooking.aggregations.FlightsWithMeal;
+import com.flightBooking.aggregations.PopularDestinations;
+import com.flightBooking.aggregations.RoutePrices;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import com.flightBooking.model.Cities;
 import com.flightBooking.model.FlightInventory;
@@ -17,5 +22,41 @@ public interface FlightInventoryRepository extends ReactiveMongoRepository<Fligh
 	);
 
 	Mono<FlightInventory> findFirstByFlightNumberAndDepartureDate(String flightNumber, LocalDate departureDate);
+	
+	
+	@Aggregation(pipeline = {
+		    "{ $group: { _id: { src: '$sourceCity', dest: '$destinationCity' }, avgPrice: { $avg: '$price' } }}",
+		    "{ $project: { sourceCity: '$_id.src', destinationCity: '$_id.dest', averagePrice: '$avgPrice', _id: 0 }}"
+		})
+		Flux<RoutePrices> getAveragePricePerRoute();
+	
+	@Aggregation(pipeline = {
+		    "{ $group: { _id: '$destinationCity', count: { $sum: 1 } }}",
+		    "{ $sort: { count: -1 }}",
+		    "{ $limit: 5 }",
+		    "{ $project: { destinationCity: '$_id', flightCount: '$count', _id: 0 }}"
+		})
+		Flux<PopularDestinations> getTopDestinations();
+	
+	@Aggregation(pipeline = {
+		    "{ $match: { departureDate: { $gte: ISODate() } }}",
+		    "{ $group: { _id: '$departureDate', totalFlights: { $sum: 1 } }}",
+		    "{ $project: { departureDate: '$_id', totalFlights: 1, _id: 0 }}"
+		})
+		Flux<FlightsPerDay> getUpcomingFlightCounts();
+	
+	@Aggregation(pipeline = {
+		    "{ $group: { _id: '$mealAvailable', count: { $sum: 1 } }}",
+		    "{ $project: { mealAvailable: '$_id', count: 1, _id: 0 }}"
+		})
+		Flux<FlightsWithMeal> getMealAvailabilityStats();
+
+	Flux<?> getTopExpensiveFlights();
+
+	
+
+
+
+
 
 }
