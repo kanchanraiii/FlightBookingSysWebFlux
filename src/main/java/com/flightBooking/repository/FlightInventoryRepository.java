@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import com.flightBooking.model.Cities;
 import com.flightBooking.model.FlightInventory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 
 public interface FlightInventoryRepository extends ReactiveMongoRepository<FlightInventory,String>{
@@ -14,5 +15,7 @@ public interface FlightInventoryRepository extends ReactiveMongoRepository<Fligh
 			Cities destinationCity, 
 			LocalDate travelDate
 	);
+
+	Mono<FlightInventory> findFirstByFlightNumberAndDepartureDate(String flightNumber, LocalDate departureDate);
 
 }

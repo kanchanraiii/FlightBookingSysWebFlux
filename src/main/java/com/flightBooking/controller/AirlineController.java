@@ -25,7 +25,7 @@ public class AirlineController {
     }
 
     // to get airlines in db
-    @GetMapping("/getAllAirline")
+    @GetMapping("/getAllAirlines")
     @ResponseStatus(HttpStatus.OK)
     public Flux<Airline> getAllAirlines() {
         return airlineService.getAllAirlines();
