@@ -11,13 +11,12 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import com.flightapp.model.Cities;
 import com.flightapp.model.Meal;
 import com.flightapp.model.TripType;
-
 import reactor.core.publisher.Mono;
 
 @RestControllerAdvice
 public class GlobalErrorHandler {
 
-    private static final String ErrorMessage = "error";
+    private static final String ERROR_MESSAGE = "error";
 
     @ExceptionHandler(WebExchangeBindException.class)
     public Mono<Map<String, String>> handleValidationErrors(WebExchangeBindException exception) {
@@ -30,12 +29,12 @@ public class GlobalErrorHandler {
 
     @ExceptionHandler(ValidationException.class)
     public Mono<Map<String, String>> handleCustomValidation(ValidationException ex) {
-        return Mono.just(Map.of(ErrorMessage, ex.getMessage()));
+        return Mono.just(Map.of(ERROR_MESSAGE, ex.getMessage()));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public Mono<Map<String, String>> handleNotFound(ResourceNotFoundException ex) {
-        return Mono.just(Map.of(ErrorMessage, ex.getMessage()));
+        return Mono.just(Map.of(ERROR_MESSAGE, ex.getMessage()));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -47,37 +46,37 @@ public class GlobalErrorHandler {
             Class<?> targetType = invalidEx.getTargetType();
 
             if (targetType == Cities.class) {
-                error.put(ErrorMessage, "Invalid city. Allowed values: " + Arrays.toString(Cities.values()));
+                error.put(ERROR_MESSAGE, "Invalid city. Allowed values: " + Arrays.toString(Cities.values()));
                 return Mono.just(error);
             }
 
             if (targetType == TripType.class) {
-                error.put(ErrorMessage, "Invalid trip type. Allowed values: " + Arrays.toString(TripType.values()));
+                error.put(ERROR_MESSAGE, "Invalid trip type. Allowed values: " + Arrays.toString(TripType.values()));
                 return Mono.just(error);
             }
 
             if (targetType == Meal.class) {
-                error.put(ErrorMessage, "Invalid meal type. Allowed values: " + Arrays.toString(Meal.values()));
+                error.put(ERROR_MESSAGE, "Invalid meal type. Allowed values: " + Arrays.toString(Meal.values()));
                 return Mono.just(error);
             }
 
             if (targetType == Boolean.class) {
-                error.put(ErrorMessage, "Invalid boolean value. Allowed values: true or false");
+                error.put(ERROR_MESSAGE, "Invalid boolean value. Allowed values: true or false");
                 return Mono.just(error);
             }
         }
 
         if (cause instanceof DateTimeParseException) {
-            error.put(ErrorMessage, "Invalid date format. Use yyyy-MM-dd");
+            error.put(ERROR_MESSAGE, "Invalid date format. Use yyyy-MM-dd");
             return Mono.just(error);
         }
 
-        error.put(ErrorMessage, "Invalid JSON request");
+        error.put(ERROR_MESSAGE, "Invalid JSON request");
         return Mono.just(error);
     }
 
     @ExceptionHandler(Exception.class)
     public Mono<Map<String, String>> handleOthers(Exception ex) {
-        return Mono.just(Map.of(ErrorMessage, ex.getMessage()));
+        return Mono.just(Map.of(ERROR_MESSAGE, ex.getMessage()));
     }
 }

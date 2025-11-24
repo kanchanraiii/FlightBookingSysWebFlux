@@ -26,94 +26,97 @@ public class FlightInventoryService {
 
     @Autowired
     private AirlineRepository airlineRepository;
-    
+
     @Autowired
     private SeatsRepository seatRepository;
 
-
     public Mono<FlightInventory> addInventory(AddFlightInventoryRequest req) {
 
+        return validateRequest(req)
+                .then(validateDates(req))
+                .then(airlineRepository.findById(req.getAirlineCode())
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException("Airline not found"))))
+                .then(checkDuplicateFlight(req))
+                .switchIfEmpty(createInventory(req));
+    }
+
+   
+
+    private Mono<Void> validateRequest(AddFlightInventoryRequest req) {
         if (req.getFlightNumber() == null || req.getFlightNumber().isBlank()) {
             return Mono.error(new ValidationException("Flight number is required"));
         }
-
         if (req.getSourceCity() == null) {
             return Mono.error(new ValidationException("Source city is required"));
         }
-
         if (req.getDestinationCity() == null) {
             return Mono.error(new ValidationException("Destination city is required"));
         }
-
         if (req.getSourceCity().equals(req.getDestinationCity())) {
             return Mono.error(new ValidationException("Source and destination cannot be the same"));
         }
-
         if (req.getDepartureDate() == null || req.getDepartureTime() == null) {
             return Mono.error(new ValidationException("Departure date & time are required"));
         }
-
         if (req.getArrivalDate() == null || req.getArrivalTime() == null) {
             return Mono.error(new ValidationException("Arrival date & time are required"));
         }
-
         if (req.getTotalSeats() == null || req.getTotalSeats() <= 0) {
             return Mono.error(new ValidationException("Total seats must be greater than 0"));
         }
-
         if (req.getPrice() == null || req.getPrice() <= 0) {
             return Mono.error(new ValidationException("Price must be greater than 0"));
         }
+        return Mono.empty();
+    }
 
-        LocalDateTime departureDT = LocalDateTime.of(req.getDepartureDate(), req.getDepartureTime());
-        LocalDateTime arrivalDT = LocalDateTime.of(req.getArrivalDate(), req.getArrivalTime());
+    private Mono<Void> validateDates(AddFlightInventoryRequest req) {
+        LocalDateTime departure = LocalDateTime.of(req.getDepartureDate(), req.getDepartureTime());
+        LocalDateTime arrival = LocalDateTime.of(req.getArrivalDate(), req.getArrivalTime());
 
-        if (!departureDT.isAfter(LocalDateTime.now())) {
+        if (!departure.isAfter(LocalDateTime.now())) {
             return Mono.error(new ValidationException("Departure must be in the future"));
         }
-
-        if (!arrivalDT.isAfter(departureDT)) {
+        if (!arrival.isAfter(departure)) {
             return Mono.error(new ValidationException("Arrival must be after departure"));
         }
-
-        return airlineRepository.findById(req.getAirlineCode())
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Airline not found")))
-                .flatMap(airline ->
-                        flightInventoryRepository
-                                .findFirstByFlightNumberAndDepartureDate(
-                                        req.getFlightNumber(),
-                                        req.getDepartureDate()
-                                )
-                                .flatMap(existing ->
-                                        Mono.<FlightInventory>error(
-                                                new ValidationException("Flight already exists on this date")
-                                        )
-                                )
-                                .switchIfEmpty(Mono.defer(() -> {
-                                    FlightInventory inv = new FlightInventory();
-                                    inv.setAirlineCode(airline.getAirlineCode());
-                                    inv.setFlightNumber(req.getFlightNumber());
-                                    inv.setSourceCity(req.getSourceCity());
-                                    inv.setDestinationCity(req.getDestinationCity());
-                                    inv.setDepartureDate(req.getDepartureDate());
-                                    inv.setDepartureTime(req.getDepartureTime());
-                                    inv.setArrivalDate(req.getArrivalDate());
-                                    inv.setArrivalTime(req.getArrivalTime());
-                                    inv.setMealAvailable(req.isMealAvailable());
-                                    inv.setTotalSeats(req.getTotalSeats());
-                                    inv.setAvailableSeats(req.getTotalSeats());
-                                    inv.setPrice(req.getPrice());
-
-                                    return flightInventoryRepository.save(inv)
-                                            .flatMap(saved ->
-                                                    generateSeats(saved.getFlightId(), saved.getTotalSeats())
-                                                            .thenReturn(saved)
-                                            );
-
-                                }))
-                );
+        return Mono.empty();
     }
+
+    private Mono<FlightInventory> checkDuplicateFlight(AddFlightInventoryRequest req) {
+        return flightInventoryRepository
+                .findFirstByFlightNumberAndDepartureDate(req.getFlightNumber(), req.getDepartureDate())
+                .flatMap(existing -> Mono.error(
+                        new ValidationException("Flight already exists on this date")));
+    }
+
     
+
+    private Mono<FlightInventory> createInventory(AddFlightInventoryRequest req) {
+        FlightInventory inv = mapToEntity(req);
+
+        return flightInventoryRepository.save(inv)
+                .flatMap(saved -> generateSeats(saved.getFlightId(), saved.getTotalSeats())
+                        .thenReturn(saved));
+    }
+
+    private FlightInventory mapToEntity(AddFlightInventoryRequest req) {
+        FlightInventory inv = new FlightInventory();
+        inv.setAirlineCode(req.getAirlineCode());
+        inv.setFlightNumber(req.getFlightNumber());
+        inv.setSourceCity(req.getSourceCity());
+        inv.setDestinationCity(req.getDestinationCity());
+        inv.setDepartureDate(req.getDepartureDate());
+        inv.setDepartureTime(req.getDepartureTime());
+        inv.setArrivalDate(req.getArrivalDate());
+        inv.setArrivalTime(req.getArrivalTime());
+        inv.setMealAvailable(req.isMealAvailable());
+        inv.setTotalSeats(req.getTotalSeats());
+        inv.setAvailableSeats(req.getTotalSeats());
+        inv.setPrice(req.getPrice());
+        return inv;
+    }
+
     private Mono<Void> generateSeats(String flightId, int totalSeats) {
         List<Seat> seats = new ArrayList<>();
 
@@ -124,8 +127,6 @@ public class FlightInventoryService {
             s.setBooked(false);
             seats.add(s);
         }
-
         return seatRepository.saveAll(seats).then();
     }
-
 }
