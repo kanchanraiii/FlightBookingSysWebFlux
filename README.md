@@ -23,6 +23,7 @@ All screenshots are included in the PDF below:
 - Centralized exception handling via  
   `GlobalErrorHandler.java`, `ValidationException.java`, `ResourceNotFoundException.java` in `com.flightapp.exceptions`
 - SonarQube analysis applied and reduced 87 vulnerabilities
+- Resused the `Services` from previous mvc based version of this project.
 
 ---
 ### ➡️ ER Diragram
