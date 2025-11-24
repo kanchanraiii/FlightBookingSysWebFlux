@@ -12,8 +12,10 @@ public class Seat {
 
     @Id
     private String seatId;
-    
+    private boolean booked;
     private String flightId; // fk -> flightInventory
     private String seatNo;
     private boolean available;
+	
+	
 }

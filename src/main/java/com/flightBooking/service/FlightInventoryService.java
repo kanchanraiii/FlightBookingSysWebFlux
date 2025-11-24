@@ -1,6 +1,8 @@
 package com.flightBooking.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,8 +10,10 @@ import org.springframework.stereotype.Service;
 import com.flightBooking.exceptions.ResourceNotFoundException;
 import com.flightBooking.exceptions.ValidationException;
 import com.flightBooking.model.FlightInventory;
+import com.flightBooking.model.Seat;
 import com.flightBooking.repository.AirlineRepository;
 import com.flightBooking.repository.FlightInventoryRepository;
+import com.flightBooking.repository.SeatsRepository;
 import com.flightBooking.request.AddFlightInventoryRequest;
 
 import reactor.core.publisher.Mono;
@@ -22,6 +26,10 @@ public class FlightInventoryService {
 
     @Autowired
     private AirlineRepository airlineRepository;
+    
+    @Autowired
+    private SeatsRepository seatRepository;
+
 
     public Mono<FlightInventory> addInventory(AddFlightInventoryRequest req) {
 
@@ -96,8 +104,28 @@ public class FlightInventoryService {
                                     inv.setAvailableSeats(req.getTotalSeats());
                                     inv.setPrice(req.getPrice());
 
-                                    return flightInventoryRepository.save(inv);
+                                    return flightInventoryRepository.save(inv)
+                                            .flatMap(saved ->
+                                                    generateSeats(saved.getFlightId(), saved.getTotalSeats())
+                                                            .thenReturn(saved)
+                                            );
+
                                 }))
                 );
     }
+    
+    private Mono<Void> generateSeats(String flightId, int totalSeats) {
+        List<Seat> seats = new ArrayList<>();
+
+        for (int i = 1; i <= totalSeats; i++) {
+            Seat s = new Seat();
+            s.setFlightId(flightId);
+            s.setSeatNo("S" + i);
+            s.setBooked(false);
+            seats.add(s);
+        }
+
+        return seatRepository.saveAll(seats).then();
+    }
+
 }
