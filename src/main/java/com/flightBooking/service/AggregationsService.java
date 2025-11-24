@@ -14,11 +14,8 @@ public class AggregationsService {
 	@Autowired
     private FlightInventoryRepository flightRepo;
 	
-	@Autowired
-	private AirlineRepository airlineRepo;
-	
 	public Flux<?> flightsPerAirline() { 
-		return airlineRepo.getFlightsPerAirline(); 
+		return flightRepo.getFlightsPerAirline(); 
 	}
     public Flux<?> avgPricePerRoute() { 
     	return flightRepo.getAveragePricePerRoute(); 
@@ -27,7 +24,7 @@ public class AggregationsService {
     	return flightRepo.getTopDestinations(); 
     }
     public Flux<?> seatsPerAirline() { 
-    	return airlineRepo.getSeatStatsPerAirline(); 
+    	return flightRepo.getSeatStatsPerAirline(); 
     }
     public Flux<?> upcomingFlightsPerDay() { 
     	return flightRepo.getUpcomingFlightCounts(); 
