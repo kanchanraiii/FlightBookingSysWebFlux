@@ -1,5 +1,7 @@
 package com.flightapp;
 
+import com.flightapp.exceptions.ResourceNotFoundException;
+import com.flightapp.exceptions.ValidationException;
 import com.flightapp.model.Booking;
 import com.flightapp.repository.BookingRepository;
 import com.flightapp.service.TicketService;
@@ -69,27 +71,27 @@ class TicketServiceTests {
         when(bookingRepository.findByPnrReturn(pnr)).thenReturn(Mono.empty());
 
         StepVerifier.create(ticketService.getTicketByPnr(pnr))
-                .verifyErrorMatches(ex -> ex.getClass().getSimpleName().equals("ResourceNotFoundException"));
+                .verifyErrorMatches(ex -> ex instanceof ResourceNotFoundException);
     }
 
     @Test
     @DisplayName("Rejects invalid PNR length")
     void rejectsInvalidPnrLength() {
         StepVerifier.create(ticketService.getTicketByPnr("123"))
-                .verifyErrorMatches(ex -> ex.getClass().getSimpleName().equals("ValidationException"));
+                .verifyErrorMatches(ex -> ex instanceof ValidationException);
     }
 
     @Test
     @DisplayName("Rejects non-alphanumeric PNR")
     void rejectsNonAlphanumericPnr() {
         StepVerifier.create(ticketService.getTicketByPnr("PNR$12"))
-                .verifyErrorMatches(ex -> ex.getClass().getSimpleName().equals("ValidationException"));
+                .verifyErrorMatches(ex -> ex instanceof ValidationException);
     }
 
     @Test
     @DisplayName("Rejects empty PNR")
     void rejectsEmptyPnr() {
         StepVerifier.create(ticketService.getTicketByPnr(" "))
-                .verifyErrorMatches(ex -> ex.getClass().getSimpleName().equals("ValidationException"));
+                .verifyErrorMatches(ex -> ex instanceof ValidationException);
     }
 }
