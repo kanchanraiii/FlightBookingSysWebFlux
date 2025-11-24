@@ -20,13 +20,13 @@ import reactor.core.publisher.Mono;
 public class FlightInventoryController {
 	
 	@Autowired
-	private FlightInventoryService FlightInventoryService;
+	private FlightInventoryService flightinventoryService;
 	
 	// to add a flight in flightInventory
 	@PostMapping("/airline/inventory/add")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Mono<FlightInventory> addInventory(@Valid @RequestBody AddFlightInventoryRequest req){
-		 return FlightInventoryService.addInventory(req);
+		 return flightinventoryService.addInventory(req);
 	}
 
 }
