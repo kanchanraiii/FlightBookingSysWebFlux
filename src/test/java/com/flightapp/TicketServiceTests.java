@@ -5,7 +5,6 @@ import com.flightapp.exceptions.ValidationException;
 import com.flightapp.model.Booking;
 import com.flightapp.repository.BookingRepository;
 import com.flightapp.service.TicketService;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

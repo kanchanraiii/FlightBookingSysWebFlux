@@ -3,7 +3,6 @@ package com.flightapp;
 import com.flightapp.model.Cities;
 import com.flightapp.model.FlightInventory;
 import com.flightapp.repository.FlightInventoryRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +66,30 @@ class AggregationTests {
     void testTopDestinations() {
         StepVerifier.create(repo.getTopDestinations())
                 .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void testFlightsPerAirline() {
+        StepVerifier.create(repo.getFlightsPerAirline())
+                .expectNextMatches(stat -> stat.getTotalFlights() == 1L)
+                .expectNextMatches(stat -> stat.getTotalFlights() == 1L)
+                .verifyComplete();
+    }
+
+    @Test
+    void testSeatStatsPerAirline() {
+        StepVerifier.create(repo.getSeatStatsPerAirline())
+                .expectNextMatches(stat -> stat.getTotalAvailableSeats() == 120L || stat.getTotalAvailableSeats() == 90L)
+                .expectNextMatches(stat -> stat.getTotalAvailableSeats() == 120L || stat.getTotalAvailableSeats() == 90L)
+                .verifyComplete();
+    }
+
+    @Test
+    void testTopExpensiveFlights() {
+        StepVerifier.create(repo.getTopExpensiveFlights())
+                .expectNextMatches(f -> f.getPrice() >= 6000.0)
+                .expectNextMatches(f -> f.getPrice() >= 6000.0)
                 .verifyComplete();
     }
 

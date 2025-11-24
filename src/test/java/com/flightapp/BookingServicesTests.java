@@ -14,7 +14,6 @@ import com.flightapp.repository.PassengerRepository;
 import com.flightapp.request.BookingRequest;
 import com.flightapp.request.PassengerRequest;
 import com.flightapp.service.BookingService;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,7 +89,8 @@ class BookingServicesTests {
         return req;
     }
 
-    private void mockPassengerSave() {
+    @SuppressWarnings("unchecked")
+	private void mockPassengerSave() {
         when(passengerRepository.saveAll(any(Publisher.class)))
                 .thenAnswer(inv -> Flux.from((Publisher<?>) inv.getArgument(0)));
     }
@@ -232,5 +232,28 @@ class BookingServicesTests {
 
         StepVerifier.create(bookingService.bookFlight("OUT1", req))
                 .verifyError(ValidationException.class);
+    }
+
+    @Test
+    @DisplayName("Get ticket fetches booking by outbound PNR")
+    void getTicket() {
+        Booking booking = new Booking();
+        booking.setPnrOutbound("PNR007");
+        when(bookingRepository.findByPnrOutbound("PNR007")).thenReturn(Mono.just(booking));
+
+        StepVerifier.create(bookingService.getTicket("PNR007"))
+                .expectNext(booking)
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Get history returns bookings for an email")
+    void getHistory() {
+        when(bookingRepository.findByContactEmail("user@example.com"))
+                .thenReturn(Flux.just(new Booking(), new Booking()));
+
+        StepVerifier.create(bookingService.getHistory("user@example.com"))
+                .expectNextCount(2)
+                .verifyComplete();
     }
 }

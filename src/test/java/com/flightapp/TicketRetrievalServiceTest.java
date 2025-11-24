@@ -1,13 +1,13 @@
 package com.flightapp;
 
 import com.flightapp.exceptions.ResourceNotFoundException;
+import com.flightapp.exceptions.ValidationException;
 import com.flightapp.model.Booking;
 import com.flightapp.model.BookingStatus;
 import com.flightapp.repository.BookingRepository;
 import com.flightapp.repository.FlightInventoryRepository;
 import com.flightapp.repository.PassengerRepository;
 import com.flightapp.service.BookingService;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

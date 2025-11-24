@@ -1,9 +1,7 @@
 package com.flightapp.controller;
 
-import com.flightapp.controller.TicketController;
 import com.flightapp.model.Booking;
 import com.flightapp.service.BookingService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

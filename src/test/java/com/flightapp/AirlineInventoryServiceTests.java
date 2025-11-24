@@ -1,11 +1,11 @@
 package com.flightapp;
 
 import com.flightapp.exceptions.ResourceNotFoundException;
+import com.flightapp.exceptions.ValidationException;
 import com.flightapp.model.Airline;
 import com.flightapp.repository.AirlineRepository;
 import com.flightapp.request.AddAirlineRequest;
 import com.flightapp.service.AirlineInventoryService;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +18,7 @@ import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,58 +28,60 @@ class AirlineInventoryServiceTests {
     private AirlineRepository airlineRepository;
 
     @InjectMocks
-    private AirlineInventoryService airlineInventoryService;
+    private AirlineInventoryService airlineService;
 
-    private AddAirlineRequest req() {
+    private AddAirlineRequest request(String code, String name) {
         AddAirlineRequest req = new AddAirlineRequest();
-        req.setAirlineCode("AI");
-        req.setAirlineName("Air India");
+        req.setAirlineCode(code);
+        req.setAirlineName(name);
         return req;
     }
 
     @Test
-    @DisplayName("Add airline persists code and name")
-    void addAirline() {
+    @DisplayName("Add airline uppercases code and saves when not existing")
+    void addAirlineHappyPath() {
+        AddAirlineRequest req = request("ai", "Air India");
         when(airlineRepository.existsById("AI")).thenReturn(Mono.just(false));
         when(airlineRepository.save(any(Airline.class)))
-                .thenAnswer(inv -> {
-                    Airline a = inv.getArgument(0);
-                    return Mono.just(a);
-                });
+                .thenAnswer(inv -> Mono.just(inv.getArgument(0, Airline.class)));
 
-        StepVerifier.create(airlineInventoryService.addAirline(req()))
-                .assertNext(a -> assertEquals("AI", a.getAirlineCode()))
+        StepVerifier.create(airlineService.addAirline(req))
+                .assertNext(saved -> {
+                    assertEquals("AI", saved.getAirlineCode());
+                    assertEquals("Air India", saved.getAirlineName());
+                })
                 .verifyComplete();
     }
 
     @Test
-    @DisplayName("Get all airlines returns flux from repository")
+    @DisplayName("Reject duplicate airline codes")
+    void rejectDuplicateAirline() {
+        when(airlineRepository.existsById("AI")).thenReturn(Mono.just(true));
+        StepVerifier.create(airlineService.addAirline(request("AI", "Name")))
+                .verifyError(ValidationException.class);
+    }
+
+    @Test
+    @DisplayName("Reject missing airline name")
+    void rejectMissingName() {
+        StepVerifier.create(airlineService.addAirline(request("AI", " ")))
+                .verifyError(ValidationException.class);
+    }
+
+    @Test
+    @DisplayName("Get all airlines delegates to repository")
     void getAllAirlines() {
         when(airlineRepository.findAll()).thenReturn(Flux.just(new Airline(), new Airline()));
-
-        StepVerifier.create(airlineInventoryService.getAllAirlines())
+        StepVerifier.create(airlineService.getAllAirlines())
                 .expectNextCount(2)
                 .verifyComplete();
     }
 
     @Test
-    @DisplayName("Get airline by code returns mono")
-    void getAirline() {
-        Airline airline = new Airline();
-        airline.setAirlineCode("AI");
-        when(airlineRepository.findById("AI")).thenReturn(Mono.just(airline));
-
-        StepVerifier.create(airlineInventoryService.getAirline("AI"))
-                .assertNext(a -> assertEquals("AI", a.getAirlineCode()))
-                .verifyComplete();
-    }
-
-    @Test
-    @DisplayName("Get airline returns empty when not found")
+    @DisplayName("Get airline by code uppercases input and throws when missing")
     void getAirlineNotFound() {
-        when(airlineRepository.findById("XX")).thenReturn(Mono.empty());
-
-        StepVerifier.create(airlineInventoryService.getAirline("XX"))
+        when(airlineRepository.findById(anyString())).thenReturn(Mono.empty());
+        StepVerifier.create(airlineService.getAirline("ai"))
                 .verifyError(ResourceNotFoundException.class);
     }
 }

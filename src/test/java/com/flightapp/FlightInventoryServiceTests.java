@@ -11,7 +11,6 @@ import com.flightapp.repository.FlightInventoryRepository;
 import com.flightapp.repository.SeatsRepository;
 import com.flightapp.request.AddFlightInventoryRequest;
 import com.flightapp.service.FlightInventoryService;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,7 +67,8 @@ class FlightInventoryServiceTests {
         when(airlineRepository.findById(code)).thenReturn(Mono.just(airline));
     }
 
-    private void mockSeatGeneration() {
+    @SuppressWarnings("unchecked")
+	private void mockSeatGeneration() {
         when(seatsRepository.saveAll(any(Iterable.class)))
                 .thenAnswer(inv -> Flux.fromIterable((Iterable<Seat>) inv.getArgument(0)));
     }

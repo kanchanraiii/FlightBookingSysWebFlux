@@ -1,12 +1,10 @@
 package com.flightapp.controller;
 
-import com.flightapp.controller.BookingController;
 import com.flightapp.model.Booking;
 import com.flightapp.model.TripType;
 import com.flightapp.request.BookingRequest;
 import com.flightapp.request.PassengerRequest;
 import com.flightapp.service.BookingService;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

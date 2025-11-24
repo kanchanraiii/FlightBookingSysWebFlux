@@ -7,7 +7,6 @@ import com.flightapp.model.FlightInventory;
 import com.flightapp.repository.FlightInventoryRepository;
 import com.flightapp.request.FlightSearchRequest;
 import com.flightapp.service.FlightSearchService;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,8 +1,4 @@
 package com.flightapp;
-import com.flightapp.aggregations.FlightsPerDay;
-import com.flightapp.aggregations.FlightsWithMeal;
-import com.flightapp.aggregations.PopularDestinations;
-import com.flightapp.aggregations.RoutePrices;
 import com.flightapp.model.Cities;
 import com.flightapp.model.FlightInventory;
 import com.flightapp.repository.FlightInventoryRepository;

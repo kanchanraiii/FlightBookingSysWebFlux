@@ -1,11 +1,9 @@
 package com.flightapp.controller;
 
-import com.flightapp.controller.FlightSearchController;
 import com.flightapp.model.Cities;
 import com.flightapp.model.FlightInventory;
 import com.flightapp.request.FlightSearchRequest;
 import com.flightapp.service.FlightSearchService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

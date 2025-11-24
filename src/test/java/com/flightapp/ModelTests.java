@@ -1,20 +1,17 @@
 package com.flightapp;
 
-import org.junit.jupiter.api.Test;
-
 import com.flightapp.model.Airline;
 import com.flightapp.model.Booking;
 import com.flightapp.model.BookingStatus;
 import com.flightapp.model.Cities;
-import com.flightapp.model.FlightInventory;
 import com.flightapp.model.Gender;
 import com.flightapp.model.Meal;
 import com.flightapp.model.Passenger;
 import com.flightapp.model.Seat;
 import com.flightapp.model.TripType;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ModelTests {
