@@ -9,7 +9,10 @@ public enum Cities {
 	LUCKNOW,
 	AHEMDABAD,
 	SRINAGAR,
-	GUWAHATI
+	GUWAHATI, 
+	DELHI, 
+	KOLKATA
 	
 
 }
+
