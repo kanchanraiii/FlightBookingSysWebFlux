@@ -7,7 +7,6 @@ import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.flightapp.FlightBookingSysWebFluxApplication;
 
 @SpringBootTest(classes = FlightBookingSysWebFluxApplication.class)
 class FlightBookingSysWebFluxApplicationTests {

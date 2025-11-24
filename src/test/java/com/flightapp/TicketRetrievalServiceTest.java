@@ -1,5 +1,6 @@
 package com.flightapp;
 
+import com.flightapp.exceptions.ResourceNotFoundException;
 import com.flightapp.model.Booking;
 import com.flightapp.model.BookingStatus;
 import com.flightapp.repository.BookingRepository;
@@ -69,6 +70,6 @@ class TicketRetrievalServiceTests {
         when(bookingRepository.findByPnrOutbound(anyString())).thenReturn(Mono.empty());
 
         StepVerifier.create(bookingService.getTicket("NOEXIST"))
-                .verifyErrorMatches(ex -> ex.getClass().getSimpleName().equals("ResourceNotFoundException"));
+                .verifyErrorMatches(ex -> ex instanceof ResourceNotFoundException);
     }
 }
