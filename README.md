@@ -18,11 +18,11 @@ All screenshots are included in the PDF below:
 - Load Testing conducted using **JMeter** for **20, 50, 100 threads** across all endpoints
 - Full flight inventory module add, book, cancel tickets & flights with 9 endpoints
 - MongoDB Aggregation Pipelines for **7 use cases**  
-  *(located under `AggregationsController.java`,`com.flightapp.aggregations`)*
+  *(located under `FlightInventoryRepository.java`,`AggregationsController.java`,`com.flightapp.aggregations`)*
 - Strong validation with proper status codes - including **201 for POST**
 - Centralized exception handling via  
   `GlobalErrorHandler.java`, `ValidationException.java`, `ResourceNotFoundException.java` in `com.flightapp.exceptions`
-- SonarQube analysis applied and vulnerabilities reduced **from 87 → 14**
+- SonarQube analysis applied and reduced 87 vulnerabilities
 
 ---
 ### ➡️ ER Diragram
