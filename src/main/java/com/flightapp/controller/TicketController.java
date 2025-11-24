@@ -16,18 +16,21 @@ public class TicketController {
     @Autowired
     private BookingService bookingService;
 
+    // to get ticket based on pnr
     @GetMapping("/ticket/{pnr}")
     @ResponseStatus(HttpStatus.OK)
     public Mono<Booking> getTicket(@PathVariable String pnr) {
         return bookingService.getTicket(pnr);
     }
 
+    // to get booking history based on email
     @GetMapping("/booking/history/{email}")
     @ResponseStatus(HttpStatus.OK)
     public Flux<Booking> getHistory(@PathVariable String email) {
         return bookingService.getHistory(email);
     }
 
+    // to cancel a ticket based on pnr
     @DeleteMapping("/booking/cancel/{pnr}")
     @ResponseStatus(HttpStatus.OK)
     public Mono<String> cancelTicket(@PathVariable String pnr) {

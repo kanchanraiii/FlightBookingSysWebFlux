@@ -10,10 +10,12 @@ import lombok.Data;
 @Data
 public class Airline {
 	
+	
 	@Id
 	@Indexed(unique=true)
 	private String airlineCode;
 	private String airlineName;
 	
+    
 
 }
