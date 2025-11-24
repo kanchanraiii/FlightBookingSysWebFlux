@@ -37,9 +37,9 @@ public class AirlineInventoryService {
 
         return airlineRepository.existsById(code)
                 .flatMap(exists -> {
-                    if (exists) {
-                        return Mono.error(
-                                new ValidationException("Airline with code " + code + " already exists"));
+                    if (Boolean.TRUE.equals(exists)) {
+                        return Mono.error(new ValidationException(
+                                "Airline with code " + code + " already exists"));
                     }
 
                     Airline airline = new Airline();
@@ -48,6 +48,7 @@ public class AirlineInventoryService {
 
                     return airlineRepository.save(airline);
                 });
+
     }
 
     // fetch all airlines
