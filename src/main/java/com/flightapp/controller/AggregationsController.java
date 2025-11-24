@@ -1,11 +1,9 @@
 package com.flightapp.controller;
 
 import org.springframework.web.bind.annotation.*;
-
 import com.flightapp.service.AggregationsService;
-
+import com.flightapp.aggregations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import reactor.core.publisher.Flux;
 
 @RestController
@@ -16,37 +14,37 @@ public class AggregationsController {
     private AggregationsService service;
 
     @GetMapping("/flights-per-airline")
-    public Flux<?> flightsPerAirline() { 
-    	return service.flightsPerAirline(); 
+    public Flux<AirlineFlightCount> flightsPerAirline() {
+        return service.flightsPerAirline();
     }
 
     @GetMapping("/avg-price-route")
-    public Flux<?> avgPricePerRoute() { 
-    	return service.avgPricePerRoute(); 
+    public Flux<RoutePrices> avgPricePerRoute() {
+        return service.avgPricePerRoute();
     }
 
     @GetMapping("/top-destinations")
-    public Flux<?> topDestinations() { 
-    	return service.topDestinations(); 
+    public Flux<PopularDestinations> topDestinations() {
+        return service.topDestinations();
     }
 
     @GetMapping("/seats-per-airline")
-    public Flux<?> seatsPerAirline() { 
-    	return service.seatsPerAirline(); 
+    public Flux<AirlineSeats> seatsPerAirline() {
+        return service.seatsPerAirline();
     }
 
     @GetMapping("/upcoming-flights")
-    public Flux<?> upcomingFlights() { 
-    	return service.upcomingFlightsPerDay(); 
+    public Flux<FlightsPerDay> upcomingFlights() {
+        return service.upcomingFlightsPerDay();
     }
 
     @GetMapping("/meal-availability")
-    public Flux<?> mealStats() { 
-    	return service.mealStats(); 
+    public Flux<FlightsWithMeal> mealStats() {
+        return service.mealStats();
     }
 
     @GetMapping("/top-expensive-flights")
-    public Flux<?> expensiveFlights() { 
-    	return service.expensiveFlights(); 
+    public Flux<HighestPriceFlights> expensiveFlights() {
+        return service.expensiveFlights();
     }
 }
