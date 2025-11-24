@@ -1,6 +1,8 @@
 package com.flightBooking.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.flightBooking.model.Airline;
 import com.flightBooking.repository.AirlineRepository;
 import com.flightBooking.request.AddAirlineRequest;
@@ -8,6 +10,7 @@ import com.flightBooking.request.AddAirlineRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Service
 public class AirlineInventoryService {
 	
 	@Autowired

@@ -1,9 +1,11 @@
 package com.flightBooking.service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.flightBooking.model.Booking;
 import com.flightBooking.model.BookingStatus;
 import com.flightBooking.model.FlightInventory;
@@ -21,19 +23,19 @@ import reactor.core.publisher.Mono;
 public class BookingService {
 	
 	@Autowired
-	private BookingRepository BookingRepository;
+	private BookingRepository bookingRepository;
 	
 	@Autowired
-	private FlightInventoryRepository FlightInventoryRepository;
+	private FlightInventoryRepository flightInventoryRepository;
 	
 	@Autowired
-	private PassengerRepository PassengerRepository;
+	private PassengerRepository passengerRepository;
 	
 	
 	// to book a flight
-	public Mono<Booking> bookFlight(BookingRequest req) {
+	public Mono<Booking> bookFlight(String flightId, BookingRequest req) {
 	    Mono<FlightInventory> outboundMono =
-	            FlightInventoryRepository.findById(req.getOutboundFlightId());
+	            flightInventoryRepository.findById(flightId);
 
 	    if (req.getReturnFlightId() == null) {
 	        return outboundMono.flatMap(outbound ->
@@ -41,7 +43,7 @@ public class BookingService {
 	    }
 
 	    Mono<FlightInventory> returnMono =
-	            FlightInventoryRepository.findById(req.getReturnFlightId());
+	            flightInventoryRepository.findById(req.getReturnFlightId());
 
 	    return outboundMono.zipWith(returnMono)
 	            .flatMap(tuple ->
@@ -64,9 +66,8 @@ public class BookingService {
 	    booking.setStatus(BookingStatus.CONFIRMED);
 	    booking.setPnrOutbound(UUID.randomUUID().toString().replace("-", "").substring(0, 6));
 
-	    return BookingRepository.save(booking)
-	            .flatMap(saved -> savePassengers(req, saved)
-	                    .thenReturn(saved));
+	    return bookingRepository.save(booking)
+	            .flatMap(saved -> savePassengers(req, saved).thenReturn(saved));
 	}
 	
 	
@@ -75,9 +76,11 @@ public class BookingService {
         Flux<Passenger> passengers = Flux.fromIterable(req.getPassengers())
                 .map(p -> toPassenger(p, booking.getBookingId()));
 
-        return PassengerRepository.saveAll(passengers).then();
+        return passengerRepository.saveAll(passengers).then();
     }
 	
+	
+	// to set passenger list
 	private Passenger toPassenger(PassengerRequest req, String bookingId) {
         Passenger p = new Passenger();
         p.setName(req.getName());
@@ -90,31 +93,39 @@ public class BookingService {
         return p;
     }
 	
-	// updating seat no
-	@SuppressWarnings("unused")
-	private Mono<Void> updateSeats(FlightInventory outbound, FlightInventory returning, int count) {
-        outbound.setAvailableSeats(outbound.getAvailableSeats() - count);
-        Mono<FlightInventory> saveOutbound = FlightInventoryRepository.save(outbound);
-
-        if (returning != null) {
-            returning.setAvailableSeats(returning.getAvailableSeats() - count);
-            Mono<FlightInventory> saveReturn = FlightInventoryRepository.save(returning);
-            return Mono.when(saveOutbound, saveReturn).then();
-        }
-
-        return saveOutbound.then();
-    }
-
-    // get ticker by pnr
+	
+	// to get ticket with pnr
 	public Mono<Booking> getTicket(String pnr) {
-        return BookingRepository.findByPnrOutbound(pnr);
+        return bookingRepository.findByPnrOutbound(pnr);
     }
 
-    // get history by email
+	
+	// to get passenger history by email
 	public Flux<Booking> getHistory(String email) {
-        return BookingRepository.findByContactEmail(email);
+        return bookingRepository.findByContactEmail(email);
     }
+	
+	// to cancel a booking
+	public Mono<Void> cancelTicket(String pnr) {
+	    return bookingRepository.findByPnrOutbound(pnr)
+	            .flatMap(booking ->
+	                    flightInventoryRepository.findById(booking.getOutboundFlightId())
+	                            .flatMap(inv -> {
+	                                LocalDateTime departure = LocalDateTime.of(
+	                                        inv.getDepartureDate(),
+	                                        inv.getDepartureTime()
+	                                );
 
+	                                LocalDateTime cutoff = LocalDateTime.now().plusHours(24);
 
+	                                if (departure.isBefore(cutoff)) {
+	                                    return Mono.empty();
+	                                }
+
+	                                booking.setStatus(BookingStatus.CANCELLED);
+	                                return bookingRepository.save(booking).then();
+	                            })
+	            );
+	}
 
 }
