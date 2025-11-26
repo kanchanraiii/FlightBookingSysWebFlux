@@ -9,7 +9,7 @@ The goal is to model a small airline booking platform, design the data model, ex
 
 All project screenshots are included in the PDF below:
 
-➡️ [Screenshots – All Word Doc.pdf](./Screenshots%20-%20All%20Word%20Doc.pdf)
+➡️ [Screenshots – All Word Doc.pdf](./Screenshots-ALL%20Word%20Doc.pdf)
 
 ---
 
